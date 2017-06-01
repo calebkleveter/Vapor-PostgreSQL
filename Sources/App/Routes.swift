@@ -21,5 +21,17 @@ final class Routes: RouteCollection {
             return req.description
         }
         
+        builder.post("user", "new") { (request) -> ResponseRepresentable in
+            guard let userName = request.data["username"]?.string,
+                  let password = request.data["password"]?.string,
+                  let email = request.data["email"]?.string else {
+                    throw Abort.badRequest
+            }
+            
+            let user = User(userName: userName, email: email, password: password)
+            try user.save()
+            
+            return "Success!\n\nUser Info:\nName: \(user.userName)\nPassword: \(user.password)\nEmail: \(user.email)\nID: \(String(describing: user.id?.wrapped))"
+        }
     }
 }
